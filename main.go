@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"sync"
 	"time"
 	"unisinos/so/tgb/utils"
 )
@@ -14,26 +15,29 @@ var mmu = NewMMU()
 
 func main() {
 	showProgramInfo()
-	// accessMultipleRandomPages(mmu)
-	accessRandomPage(mmu)
+	accessMultipleRandomPages(mmu)
 }
 
 func accessMultipleRandomPages(mmu *MMU) {
+	wg := new(sync.WaitGroup)
 	for {
-		go accessMultipleRandomPages(mmu)
+		go accessRandomPage(mmu, wg)
+		wg.Add(1)
+		wg.Wait()
 	}
 }
 
-func accessRandomPage(mmu *MMU) {
-	for {
-		rand.Seed(time.Now().UnixNano())
-		idPage := rand.Intn(125)
-		timeout := time.After(time.Second * timeToAcessMemory)
-		select {
-		case <-timeout:
-			log.Printf("Solicitando acesso à página %d\n", idPage)
-			mmu.AccessPage(idPage)
-		}
+func accessRandomPage(mmu *MMU, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	rand.Seed(time.Now().UnixNano())
+	idPage := rand.Intn(125)
+	timeout := time.After(time.Second * timeToAcessMemory)
+
+	select {
+	case <-timeout:
+		log.Printf("Solicitando acesso à página %d\n", idPage)
+		mmu.AccessPage(idPage)
 	}
 }
 
