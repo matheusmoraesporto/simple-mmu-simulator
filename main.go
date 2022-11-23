@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"sync"
 	"time"
@@ -23,7 +22,6 @@ func accessMultipleRandomPages(mmu *MMU) {
 	for {
 		go accessRandomPage(mmu, wg)
 		wg.Add(1)
-		wg.Wait()
 	}
 }
 
@@ -36,7 +34,6 @@ func accessRandomPage(mmu *MMU, wg *sync.WaitGroup) {
 
 	select {
 	case <-timeout:
-		log.Printf("Solicitando acesso à página %d\n", idPage)
 		mmu.AccessPage(idPage)
 	}
 }

@@ -34,6 +34,7 @@ func NewMMU() *MMU {
 func (mmu *MMU) AccessPage(idPage int) {
 	mmu.mu.Lock()
 	defer mmu.mu.Unlock()
+	log.Printf("Solicitando acesso à página %d\n", idPage)
 
 	index := mmu.MainMemory.GetPage(idPage) // TODO: Usar o bit de validação da virtual memory
 	if index == invalidIndex {
