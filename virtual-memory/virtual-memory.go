@@ -19,8 +19,8 @@ type VirtualMemory struct {
 
 // NewVirtualMemory creates a new VirtualMemory.
 func NewVirtualMemory() *VirtualMemory {
-	pageQuantity := memoryLength / pageLength
-	pages := make([]*VirtualMemoryPage, pageQuantity)
+	pagesLen := memoryLength / pageLength
+	pages := make([]*VirtualMemoryPage, pagesLen)
 	return &VirtualMemory{
 		Pages: pages,
 	}
@@ -28,15 +28,28 @@ func NewVirtualMemory() *VirtualMemory {
 
 // AddPage will add a new page into table page if it has availabe slots.
 func (vm *VirtualMemory) AddPage(mainMemoryPage *mainMemory.MainMemoryPage) (index int) {
-	i := vm.firstIndexAvailable()
+	i := vm.FirstIndexAvailable()
 	if i != invalidIndex {
 		vm.Pages[i] = NewVirtualMemoryPage(mainMemoryPage, true)
 	}
 	return i
 }
 
+// GetValidPage finds the page informed and return it index if there is into main memory by the valid bit.
+func (vm *VirtualMemory) GetValidPage(idPage int) int {
+	for i, page := range vm.Pages {
+		if page != nil && page.Id == idPage {
+			if page.ValidBit {
+				return i
+			}
+			break
+		}
+	}
+	return invalidIndex
+}
+
 // firstIndexAvailable identify the first index that hasn't value recorded.
-func (vm *VirtualMemory) firstIndexAvailable() int {
+func (vm *VirtualMemory) FirstIndexAvailable() int {
 	for i, page := range vm.Pages {
 		if page == nil {
 			return i

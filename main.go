@@ -1,19 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"sync"
 	"time"
 	"unisinos/so/tgb/utils"
 )
 
-const timeToAcessMemory = 2
+const (
+	maxPageId   = 125
+	maxPageSize = 64
+)
 
 var mmu = NewMMU()
 
 func main() {
-	showProgramInfo()
+	rand.Seed(time.Now().UnixNano())
+
+	utils.ShowProgramInfo()
 	accessMultipleRandomPages(mmu)
 }
 
@@ -28,23 +32,11 @@ func accessMultipleRandomPages(mmu *MMU) {
 func accessRandomPage(mmu *MMU, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	rand.Seed(time.Now().UnixNano())
-	idPage := rand.Intn(125)
-	timeout := time.After(time.Second * timeToAcessMemory)
-
-	select {
-	case <-timeout:
-		mmu.AccessPage(idPage)
-	}
+	idPage := randomGenerator(maxPageId)
+	pageSize := randomGenerator(maxPageSize)
+	mmu.AccessPage(idPage, pageSize)
 }
 
-func showProgramInfo() {
-	fmt.Println("Iniciando a simulação de gerenciamento de memória")
-	utils.PrintSeparator()
-	fmt.Println("MEMÓRIA VIRTUAL:")
-	fmt.Println("Tamanho total de 1MB - com 125 slots de páginas de 8k")
-	utils.PrintSeparator()
-	fmt.Println("MEMÓRIA PRINCIPAL:")
-	fmt.Println("Tamanho total de 64KB - com 8 slots de páginas de 8k")
-	utils.PrintSeparator()
+func randomGenerator(max int) int {
+	return rand.Intn(max)
 }

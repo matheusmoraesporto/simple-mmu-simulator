@@ -6,12 +6,14 @@ import "time"
 type MainMemoryPage struct {
 	Id         int
 	LastAccess time.Time
+	Size       int
 }
 
 // NewPage creates a new MainMemoryPage.
-func NewPage(id int) MainMemoryPage {
+func NewPage(id, size int) MainMemoryPage {
 	return MainMemoryPage{
 		Id:         id,
 		LastAccess: time.Now(),
+		Size:       size,
 	}
 }

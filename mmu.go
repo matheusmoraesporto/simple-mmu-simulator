@@ -31,18 +31,18 @@ func NewMMU() *MMU {
 
 // AccessPage simulate the behaviour of an access to a page. If the page is loaded in the main memory, it shows.
 // If it isn't, add the new page in the main memory and virtual memory.
-func (mmu *MMU) AccessPage(idPage int) {
+func (mmu *MMU) AccessPage(idPage, pageSize int) {
 	mmu.mu.Lock()
 	defer mmu.mu.Unlock()
 	log.Printf("Solicitando acesso à página %d\n", idPage)
 
-	index := mmu.MainMemory.GetPage(idPage) // TODO: Usar o bit de validação da virtual memory
+	index := mmu.VirtualMemory.GetValidPage(idPage)
 	if index == invalidIndex {
-		mmu.AddPage(idPage)
-		log.Printf("A página %d não estava na memória e foi adicionada.\n", idPage)
+		mmu.AddPage(idPage, pageSize)
 	} else {
-		mmu.MainMemory.Pages[index].LastAccess = time.Now()
-		log.Printf("A página %d já estava na memória e foi acessada.\n", idPage)
+		// TODO: talvez adicionar alguma informação, por exemplo em quais indícies da mm ela está
+		mmu.VirtualMemory.Pages[index].MainMemoryPage.LastAccess = time.Now()
+		log.Printf("A página %d(%dKB) já estava na memória e foi acessada.\n", idPage, pageSize)
 	}
 
 	mmu.VirtualMemory.PrintPages()
@@ -50,8 +50,21 @@ func (mmu *MMU) AccessPage(idPage int) {
 }
 
 // AddPage adds the new page into main memory and virtual memory.
-func (mmu *MMU) AddPage(idPage int) {
-	newPage, replacedPage := mmu.MainMemory.AddPage(idPage)
-	mmu.VirtualMemory.MarkInvalidPage(replacedPage)
-	mmu.VirtualMemory.AddPage(newPage)
+func (mmu *MMU) AddPage(idPage, pageSize int) {
+	vmIsFull := mmu.VirtualMemory.FirstIndexAvailable() == invalidIndex
+
+	// Don't add if vm pages are all filled
+	if !vmIsFull {
+		newPages, replacedPages := mmu.MainMemory.AddPage(idPage, pageSize)
+
+		for _, page := range replacedPages {
+			mmu.VirtualMemory.MarkInvalidPage(page)
+		}
+
+		for _, page := range newPages {
+			mmu.VirtualMemory.AddPage(page)
+		}
+
+		log.Printf("A página %d(%dKB) não estava na memória e foi adicionada.\n", idPage, pageSize)
+	}
 }

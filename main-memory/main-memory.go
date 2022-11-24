@@ -28,21 +28,20 @@ func NewMainMemory() *MainMemory {
 // AddPage will add a new page into table page if it has availabe slots.
 // If hasn't, will replace a page.
 // Returns the new page added and the page replaced if it was.
-func (mm *MainMemory) AddPage(idPage int) (*MainMemoryPage, *MainMemoryPage) {
-	if i := mm.firstIndexAvailable(); i != invalidIndex {
-		mm.Pages[i] = NewPage(idPage)
-		return &mm.Pages[i], nil
-	}
-	return mm.replacePage(idPage)
-}
-
-func (mm *MainMemory) GetPage(idPage int) int {
-	for i, page := range mm.Pages {
-		if page.Id == idPage {
-			return i
+func (mm *MainMemory) AddPage(idPage, pageSize int) (newPages []*MainMemoryPage, replacedPages []*MainMemoryPage) {
+	for pageSize > 0 {
+		if i := mm.firstIndexAvailable(); i != invalidIndex {
+			mm.Pages[i] = NewPage(idPage, pageSize)
+			newPages = append(newPages, &mm.Pages[i])
+		} else {
+			new, replaced := mm.replacePage(idPage, pageSize)
+			newPages = append(newPages, new)
+			replacedPages = append(replacedPages, replaced)
 		}
+
+		pageSize = pageSize - pageLength
 	}
-	return invalidIndex
+	return
 }
 
 // firstIndexAvailable identify the first index that hasn't value recorded.
@@ -57,16 +56,17 @@ func (mm *MainMemory) firstIndexAvailable() int {
 
 // replacePage is a LRU algorithm. It will replace the least recently used page by the new page.
 // Returns the new page added and the page replaced if it was.
-func (vm *MainMemory) replacePage(idPage int) (*MainMemoryPage, *MainMemoryPage) {
+func (vm *MainMemory) replacePage(idPage, pageSize int) (*MainMemoryPage, *MainMemoryPage) {
+	newPage := NewPage(idPage, pageSize)
 	indexReplace := 0
 	for i, page := range vm.Pages {
-		if page.LastAccess.Before(vm.Pages[indexReplace].LastAccess) {
+		if page.Id != newPage.Id && page.LastAccess.Before(vm.Pages[indexReplace].LastAccess) {
 			indexReplace = i
 		}
 	}
 
 	replacedPage := vm.Pages[indexReplace]
-	vm.Pages[indexReplace] = NewPage(idPage)
+	vm.Pages[indexReplace] = newPage
 
 	return &vm.Pages[indexReplace], &replacedPage
 }
@@ -75,6 +75,7 @@ func (vm *MainMemory) replacePage(idPage int) (*MainMemoryPage, *MainMemoryPage)
 func (mm *MainMemory) PrintPages() {
 	utils.PrintSeparator()
 	fmt.Println("Páginas da memória principal")
+	utils.PrintSeparator()
 	strIndex := ""
 	strPage := ""
 

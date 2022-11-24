@@ -19,3 +19,14 @@ func FormatOutputMemory(output string, value int) string {
 func PrintSeparator() {
 	fmt.Println("============================================================================================================================")
 }
+
+func ShowProgramInfo() {
+	fmt.Println("Iniciando a simulação de gerenciamento de memória")
+	PrintSeparator()
+	fmt.Println("MEMÓRIA VIRTUAL:")
+	fmt.Println("Tamanho total de 1MB - com 125 slots de páginas de 8k")
+	PrintSeparator()
+	fmt.Println("MEMÓRIA PRINCIPAL:")
+	fmt.Println("Tamanho total de 64KB - com 8 slots de páginas de 8k")
+	PrintSeparator()
+}
