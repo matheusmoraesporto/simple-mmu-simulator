@@ -24,3 +24,9 @@ It is the first memory layer that will be accessed by the MMU, it has pointers t
 
 ### Main memory
 It is the last memory layer and simulate the physical memory. Here the pages are in fact loaded and could be accessed. When a page is not loaded but all slots are filled, it will use a LRU (Least Recently Used) algorithm, to determine a page to be replaced. It will replace how many pages were necessary to complete the new page regarding it size. To identify the page that will be replaced, the LRU will choose the last recently accessed page to remove it and add the new page. It will be repeated if the page has a size over than 8Kb, that is the page slot size in the main memory, therefore the page is split to be loaded in all slots.
+
+## Relational diagram
+![alt text](https://raw.githubusercontent.com/matheusmoraesporto/simple-mmu-simulator/14dab50c48e96629b4f83dd9050c52040edab3f0/doc/diagrams/Relationship%20Diagram.drawio.svg)
+
+## Fluxogram diagram
+![alt text](https://raw.githubusercontent.com/matheusmoraesporto/simple-mmu-simulator/14dab50c48e96629b4f83dd9050c52040edab3f0/doc/diagrams/Fluxogram%20Diagram.drawio.svg)
