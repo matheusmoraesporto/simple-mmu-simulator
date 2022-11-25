@@ -40,9 +40,7 @@ func (mmu *MMU) AccessPage(idPage, pageSize int) {
 	if index == invalidIndex {
 		mmu.AddPage(idPage, pageSize)
 	} else {
-		// TODO: talvez adicionar alguma informação, por exemplo em quais indícies da mm ela está
-		mmu.VirtualMemory.Pages[index].MainMemoryPage.LastAccess = time.Now()
-		log.Printf("A página %d(%dKB) já estava na memória e foi acessada.\n", idPage, pageSize)
+		showAccessedPage(index, idPage)
 	}
 
 	mmu.VirtualMemory.PrintPages()
@@ -67,4 +65,12 @@ func (mmu *MMU) AddPage(idPage, pageSize int) {
 
 		log.Printf("A página %d(%dKB) não estava na memória e foi adicionada.\n", idPage, pageSize)
 	}
+}
+
+// showAccessedPage will show some details of the page and will set the last access.
+func showAccessedPage(index, idPage int) {
+	lastAccess := mmu.VirtualMemory.Pages[index].MainMemoryPage.LastAccess
+	mmu.VirtualMemory.Pages[index].MainMemoryPage.LastAccess = time.Now()
+	log.Printf("A página %d(%dKB) já estava na memória e foi acessada.\n", idPage, mmu.VirtualMemory.Pages[index].MainMemoryPage.Size)
+	log.Printf("A página %d tinha sido acessada pela última vez em %v, agora o última acesso é %v.\n", idPage, lastAccess, mmu.VirtualMemory.Pages[index].MainMemoryPage.LastAccess)
 }
