@@ -29,7 +29,7 @@ func NewMainMemory() *MainMemory {
 // If hasn't, will replace a page.
 // Returns the new page added and the page replaced if it was.
 func (mm *MainMemory) AddPage(idPage, pageSize int) (newPages []*MainMemoryPage, replacedPages []*MainMemoryPage) {
-	for pageSize > 0 {
+	for pageSize >= 0 {
 		if i := mm.firstIndexAvailable(); i != invalidIndex {
 			mm.Pages[i] = NewPage(idPage, pageSize)
 			newPages = append(newPages, &mm.Pages[i])
