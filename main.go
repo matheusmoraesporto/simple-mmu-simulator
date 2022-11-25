@@ -38,5 +38,5 @@ func accessRandomPage(mmu *MMU, wg *sync.WaitGroup) {
 }
 
 func randomGenerator(max int) int {
-	return rand.Intn(max)
+	return rand.Intn(max) + 1
 }
