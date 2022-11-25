@@ -24,9 +24,9 @@ func ShowProgramInfo() {
 	fmt.Println("Iniciando a simulação de gerenciamento de memória")
 	PrintSeparator()
 	fmt.Println("MEMÓRIA VIRTUAL:")
-	fmt.Println("Tamanho total de 1MB - com 125 slots de páginas de 8k")
+	fmt.Println("Tamanho total de 1MB - com 125 slots de páginas de 8Kb")
 	PrintSeparator()
 	fmt.Println("MEMÓRIA PRINCIPAL:")
-	fmt.Println("Tamanho total de 64KB - com 8 slots de páginas de 8k")
+	fmt.Println("Tamanho total de 64KB - com 8 slots de páginas de 8Kb")
 	PrintSeparator()
 }
