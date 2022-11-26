@@ -10,7 +10,7 @@ go run .
 ## Introduction
 In the main file, there is a global MMU, to represent OS MMU, it will manage the main memory and the virtual memory, mapping pages references. It is been using go routines to run parallel call to simulate an access page, the idea is create concurrency to load pages in our memory and the mmu should manage it and load each memory according to page size.
 
-Memory | Memory size | Page size | Page slotes | Behaviour when page table is full
+Memory | Memory size | Page size | Page slots | Behaviour when page table is full
 --- | --- | --- | --- | ---
 Main memory | 64Kb | 8Kb | 8 | Replace pages using LRU algorithm |
 Virtual memory | 1Mb | 8Kb | 125 | Do not add more pages |
